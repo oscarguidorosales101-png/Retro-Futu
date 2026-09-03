@@ -1,0 +1,67 @@
+{
+  "modificaciones": [
+    {
+      "id": "1",
+      "hardware": "Game Boy Color",
+      "categoria": "Consola Portátil",
+      "tipoMod": "Carcasa Transparente Amber + Pantalla IPS V3",
+      "precioEstimado": 135,
+      "tiempoDias": 3,
+      "disponible": true
+    },
+    {
+      "id": "2",
+      "hardware": "Control PS5 DualSense",
+      "categoria": "Mandos",
+      "tipoMod": "Back Paddles Programables + Joysticks Hall Effect",
+      "precioEstimado": 85,
+      "tiempoDias": 2,
+      "disponible": true
+    },
+    {
+      "id": "3",
+      "hardware": "Nintendo Switch OLED",
+      "categoria": "Consola Portátil",
+      "tipoMod": "Carcasa Holográfica Emerald + Botones Aluminio",
+      "precioEstimado": 160,
+      "tiempoDias": 4,
+      "disponible": true
+    },
+    {
+      "id": "4",
+      "hardware": "Custom Mechanical Keyboard 75%",
+      "categoria": "Teclados Mecánicos",
+      "tipoMod": "Placa de Latón + Switches Lubricados Lube/Film",
+      "precioEstimado": 190,
+      "tiempoDias": 5,
+      "disponible": true
+    },
+    {
+      "id": "5",
+      "hardware": "Game Boy Advance SP",
+      "categoria": "Consola Portátil",
+      "tipoMod": "Pantalla IPS + USB-C Mod + Carcasa Neón",
+      "precioEstimado": 110,
+      "tiempoDias": 3,
+      "disponible": true
+    },
+    {
+      "id": "6",
+      "hardware": "Control Xbox Elite",
+      "categoria": "Mandos",
+      "tipoMod": "Grips Custom + Padles Programables + Pintura Cyberpunk",
+      "precioEstimado": 95,
+      "tiempoDias": 3,
+      "disponible": true
+    }
+  ],
+  "usuarios": [
+    {
+      "id": "1",
+      "usuario": "admin",
+      "contrasena": "retro123",
+      "rol": "tecnico_master"
+    }
+  ],
+  "cotizaciones": []
+}
