@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { IconLock, IconLightning } from '../components/Icons';
 
 const Login = ({ setAuthUser }) => {
   const [user, setUser] = useState('');
@@ -35,14 +36,16 @@ const Login = ({ setAuthUser }) => {
       }
     }
 
-    setError('❌ Usuario o contraseña incorrectos.');
+    setError('Usuario o contraseña incorrectos.');
     setLoading(false);
   };
 
   return (
     <div className="page-container" style={{ maxWidth: '420px', marginTop: '4rem' }}>
       <div className="form-card" style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '3rem', marginBottom: '1rem' }}>🔐</div>
+        <div style={{ marginBottom: '1rem', display: 'flex', justifyContent: 'center' }}>
+          <IconLock size={48} color="var(--emerald-glow)" />
+        </div>
         <h2 style={{ marginBottom: '0.5rem', color: 'var(--emerald-glow)' }}>Acceso Técnico</h2>
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.8rem', fontSize: '0.9rem' }}>
           Ingresa para administrar el laboratorio de mods
@@ -76,10 +79,11 @@ const Login = ({ setAuthUser }) => {
           <button
             type="submit"
             className="btn-primary"
-            style={{ width: '100%', marginTop: '0.5rem', opacity: loading ? 0.7 : 1 }}
+            style={{ width: '100%', marginTop: '0.5rem', opacity: loading ? 0.7 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}
             disabled={loading}
           >
-            {loading ? 'Verificando...' : '⚡ Entrar al Sistema'}
+            <IconLightning size={18} color="white" />
+            {loading ? 'Verificando...' : 'Entrar al Sistema'}
           </button>
         </form>
 

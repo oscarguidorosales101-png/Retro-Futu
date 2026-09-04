@@ -1,4 +1,5 @@
 # Documentacion Vibe Coding
+
 ### Retro-Futuristic Tech Garage - VOLTGARAGE
 
 > **Fecha de analisis:** 03 de Septiembre de 2026
@@ -9,16 +10,15 @@
 
 ## 1. Resumen del Proyecto
 
-| Campo | Detalle |
-|---|---|
-| **Nombre del proyecto** | Retro-Futuristic Tech Garage / VOLTGARAGE |
-| **Tipo de aplicacion** | SPA (Single-Page Application) con React + Vite |
-| **Objetivo** | Portal web para un taller de personalizacion y modificacion de hardware retro |
-| **Negocio** | Taller de custom mods: consolas portatiles, controles y teclados mecanicos |
-| **Usuario objetivo** | Clientes que desean modificar su hardware gaming; tecnicos/administradores del taller |
-| **Problema que resuelve** | Digitalizar el catalogo de servicios, permitir cotizaciones online y gestionar el inventario del taller desde un panel administrativo |
-| **Estado actual** | MVP funcional en desarrollo. La aplicacion corre, las rutas estan operativas y las funciones principales estan implementadas. Requiere servidor JSON local (json-server) para persistencia real de datos |
-
+| Campo                     | Detalle                                                                                                                                                     |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Nombre del proyecto**   | Retro-Futuristic Tech Garage / VOLTGARAGE                                                                                                                   |
+| **Tipo de aplicacion**    | SPA (Single-Page Application) con React + Vite                                                                                                              |
+| **Objetivo**              | Portal web para un taller de personalizacion y modificacion de hardware retro                                                                               |
+| **Negocio**               | Taller de custom mods: consolas portatiles, controles y teclados mecanicos                                                                                  |
+| **Usuario objetivo**      | Clientes que desean modificar su hardware gaming; tecnicos/administradores del taller                                                                       |
+| **Problema que resuelve** | Digitalizar el catalogo de servicios, permitir cotizaciones online y gestionar el inventario del taller desde un panel administrativo                       |
+| **Estado actual**         | MVP funcional V2 completo. Formulario din√°mico avanzado, panel de administraci√≥n con indicadores y modal de detalle, persistencia dual (json-server/local). |
 
 ---
 
@@ -40,10 +40,10 @@ La aplicacion propone un portal web con estetica Cyberpunk/Retro-Futurista que:
 
 ### Usuario
 
-| Perfil | Descripcion |
-|---|---|
-| **Cliente / Jugador** | Persona que desea modificar su consola, control o teclado mecanico. Accede al catalogo, cotizador y chatbot. |
-| **Tecnico / Administrador** | Responsable del taller. Accede al panel Admin via login para gestionar el catalogo de modificaciones. |
+| Perfil                      | Descripcion                                                                                                  |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| **Cliente / Jugador**       | Persona que desea modificar su consola, control o teclado mecanico. Accede al catalogo, cotizador y chatbot. |
+| **Tecnico / Administrador** | Responsable del taller. Accede al panel Admin via login para gestionar el catalogo de modificaciones.        |
 
 ### Valor para el negocio
 
@@ -51,7 +51,6 @@ La aplicacion propone un portal web con estetica Cyberpunk/Retro-Futurista que:
 - **Reduccion de friccion**: Los clientes pueden cotizar sin necesidad de contacto previo.
 - **Gestion interna**: El tecnico administra el inventario sin herramientas externas.
 - **Diferenciacion**: La estetica Cyberpunk crea una identidad de marca solida y memorable.
-
 
 ---
 
@@ -79,15 +78,15 @@ La aplicacion propone un portal web con estetica Cyberpunk/Retro-Futurista que:
 
 ---
 
-### 3.3 Cotizador de Custom Mods
+### 3.3 Cotizador Din√°mico de Custom Mods (V2)
 
-- **Descripcion:** Formulario de solicitud de cotizacion personalizada.
-- **Que permite hacer:** El cliente ingresa el equipo, modificacion, presupuesto y email (obligatorio). La solicitud se envia y registra fecha y estado.
+- **Descripcion:** Formulario interactivo avanzado de solicitud de cotizacion.
+- **Que permite hacer:** Seleccionar equipo desde categorias, mostrar dinamicamente las modificaciones disponibles para ese equipo mediante checkboxes, calcular subtotal y tiempo en tiempo real, recoger datos del cliente y mostrar un resumen antes de enviar.
 - **Archivos involucrados:** `src/pages/Cotizador.jsx`
-- **Estado:** IMPLEMENTADA
-- **Problema que resuelve:** Permite recibir solicitudes de cotizacion de forma digital.
+- **Estado:** IMPLEMENTADA (V2)
+- **Problema que resuelve:** Permite recibir solicitudes detalladas y genera una expectativa clara de precio para el cliente.
 
-> **HECHO CONFIRMADO:** Se implementaron validaciones de email obligatorio y se definio un estado inicial 'Pendiente' con fecha. El mensaje de fallback local es claro para el usuario.
+> **HECHO CONFIRMADO:** Se implement√≥ un diccionario `MODS_CATALOG` que controla la renderizaci√≥n condicional. El sistema genera un ID de solicitud (VG-XXXX). El mensaje de fallback local es claro para el usuario si el servidor cae.
 
 ---
 
@@ -115,15 +114,15 @@ La aplicacion propone un portal web con estetica Cyberpunk/Retro-Futurista que:
 
 ---
 
-### 3.6 Panel Administrativo CRUD
+### 3.6 Panel Administrativo CRUD y Gesti√≥n de Cotizaciones (V2)
 
-- **Descripcion:** Panel protegido para gestion completa de catalogo y cotizaciones.
-- **Que permite hacer:** CRUD de modificaciones y visualizacion/cambio de estado de las cotizaciones recibidas de los clientes, separados en dos pestanas.
+- **Descripcion:** Panel protegido con doble funcionalidad: Inventario y Cotizaciones.
+- **Que permite hacer:** CRUD de modificaciones. En la vista de cotizaciones incluye indicadores de estado din√°micos (Pendientes, En revisi√≥n, Aprobadas, Rechazadas), filtros por estado, tabla ordenada por fecha y un Modal de Detalle con acciones (Revisar, Aprobar, Rechazar).
 - **Archivos involucrados:** `src/pages/Admin.jsx`
-- **Estado:** IMPLEMENTADA
-- **Problema que resuelve:** Permite al tecnico administrar tanto su oferta de servicios como la demanda (solicitudes).
+- **Estado:** IMPLEMENTADA (V2)
+- **Problema que resuelve:** Centraliza la administraci√≥n de servicios y la atenci√≥n al cliente con una UX superior.
 
----
+> **HECHO CONFIRMADO:** El uso de un Modal superpuesto resuelve el problema de visualizaci√≥n de los detalles extensos. Se incluye confirmaci√≥n `window.confirm` para evitar cambios accidentales.
 
 ### 3.7 Chatbot VoltBot
 
@@ -169,22 +168,20 @@ La aplicacion propone un portal web con estetica Cyberpunk/Retro-Futurista que:
 
 ### 3.11 Funcionalidades Pendientes (identificadas en el analisis)
 
-| Funcionalidad | Estado | Razon |
-|---|---|---|
+| Funcionalidad                                    | Estado       | Razon                                                        |
+| ------------------------------------------------ | ------------ | ------------------------------------------------------------ |
 | Visualizacion de cotizaciones recibidas en Admin | IMPLEMENTADA | El Admin ahora gestiona cotizaciones en una pestana separada |
-| Estadisticas dinamicas (datos reales) | IMPLEMENTADA | Estadisticas.jsx consume la API |
-| Logout persistente (sesion entre recargas) | IMPLEMENTADA | Se integro localStorage para mantener sesion |
-| Footer visible | IMPLEMENTADA | Se creo Footer.jsx |
-| Gestion de cotizaciones (aprobar/rechazar) | IMPLEMENTADA | Se puede cambiar el estado en el Admin |
-| Notificacion real al tecnico | PENDIENTE | No hay integracion con email o notificaciones push |
-
+| Estadisticas dinamicas (datos reales)            | IMPLEMENTADA | Estadisticas.jsx consume la API                              |
+| Logout persistente (sesion entre recargas)       | IMPLEMENTADA | Se integro localStorage para mantener sesion                 |
+| Footer visible                                   | IMPLEMENTADA | Se creo Footer.jsx                                           |
+| Gestion de cotizaciones (aprobar/rechazar)       | IMPLEMENTADA | Se puede cambiar el estado en el Admin                       |
+| Notificacion real al tecnico                     | PENDIENTE    | No hay integracion con email o notificaciones push           |
 
 ---
 
 ## 4. Estructura del Proyecto
 
-`
-git-retro/
+`git-retro/
 +-- Retro-Futu/                     <- Raiz del proyecto
     +-- index.html                   <- Entry point HTML (Vite), lang=es, title configurado
     +-- package.json                 <- Dependencias y scripts npm
@@ -210,36 +207,35 @@ git-retro/
         +-- css/
         |   +-- index.css            <- 0 bytes - archivo vacio, residual
         +-- js/
-            +-- index.js             <- 0 bytes - archivo vacio, residual
-`
+            +-- index.js             <- 0 bytes - archivo vacio, residual`
 
 ### Rutas configuradas (App.jsx)
 
-| Ruta | Componente | Acceso |
-|---|---|---|
-| `/` | `Home` | Publico |
-| `/cotizar` | `Cotizador` | Publico |
-| `/estadisticas` | `Estadisticas` | Publico |
-| `/login` | `Login` | Publico |
-| `/admin` | `Admin` | Protegido (requiere authUser) |
+| Ruta            | Componente     | Acceso                        |
+| --------------- | -------------- | ----------------------------- |
+| `/`             | `Home`         | Publico                       |
+| `/cotizar`      | `Cotizador`    | Publico                       |
+| `/estadisticas` | `Estadisticas` | Publico                       |
+| `/login`        | `Login`        | Publico                       |
+| `/admin`        | `Admin`        | Protegido (requiere authUser) |
 
 ### Dependencias principales (package.json)
 
-| Paquete | Version | Uso |
-|---|---|---|
-| react + react-dom | ^18.2.0 | Framework UI |
-| react-router-dom | ^6.22.0 | Routing SPA |
-| recharts | ^2.12.0 | Graficas interactivas |
-| vite | ^5.1.0 | Build tool y dev server |
-| json-server | ^0.17.4 | Backend REST simulado |
+| Paquete           | Version | Uso                     |
+| ----------------- | ------- | ----------------------- |
+| react + react-dom | ^18.2.0 | Framework UI            |
+| react-router-dom  | ^6.22.0 | Routing SPA             |
+| recharts          | ^2.12.0 | Graficas interactivas   |
+| vite              | ^5.1.0  | Build tool y dev server |
+| json-server       | ^0.17.4 | Backend REST simulado   |
 
 ### Colecciones en db.json
 
-| Coleccion | Endpoint | Registros actuales |
-|---|---|---|
-| `modificaciones` | GET/POST/PUT/DELETE /modificaciones | 6 |
-| `usuarios` | GET /usuarios | 1 (admin) |
-| `cotizaciones` | GET/POST /cotizaciones | 0 (vacio) |
+| Coleccion        | Endpoint                            | Registros actuales |
+| ---------------- | ----------------------------------- | ------------------ |
+| `modificaciones` | GET/POST/PUT/DELETE /modificaciones | 6                  |
+| `usuarios`       | GET /usuarios                       | 1 (admin)          |
+| `cotizaciones`   | GET/POST /cotizaciones              | 0 (vacio)          |
 
 ---
 
@@ -250,6 +246,7 @@ git-retro/
 La intencion identificable del proyecto es: construir un portal web para un taller de hardware gaming con estetica Cyberpunk que permita mostrar servicios, recibir cotizaciones y administrar el catalogo.
 
 Esta intencion se evidencia en:
+
 - El nombre del proyecto y la meta description del HTML (Estudio de personalizacion de consolas, controles y teclados mecanicos con estetica Cyberpunk).
 - La paleta de colores definida en CSS (Volcanic Cyber-Lab).
 - La nomenclatura consistente: VoltBot, VOLTGARAGE, Retro-Futuristic Tech Garage.
@@ -297,24 +294,23 @@ Las funcionalidades que necesitan pruebas verificadas por un humano:
 
 No existe evidencia suficiente en los archivos actuales para confirmar otras etapas de refinamiento adicionales.
 
-
 ---
 
 ## 6. Comparacion con la Practica
 
-| Requisito | Estado | Evidencia | Pendiente |
-|---|---|---|---|
-| **Intencion** - Intencion clara de negocio | CUMPLE | Meta description, paleta, nomenclatura coherente | - |
-| **Contexto** - Dominio de negocio comprensible | CUMPLE | Taller de mods gaming con estetica Cyberpunk | - |
-| **Iteracion corta** - Evidencia de ajustes | PARCIAL | pausedRef y cleanup en canvas sugieren iteracion; archivos vacios sugieren proceso incompleto | Completar refinamiento |
-| **Verificacion** - Revision humana del codigo generado | PARCIAL | Boton de accesibilidad evidencia revision; credenciales expuestas evidencian falta de revision | Revisar seguridad y datos estaticos |
-| **Pensamiento de sistemas** - App funciona como sistema integrado | PARCIAL | Routing, auth guard, fallback dual; pero estadisticas no conectan con catalogo real | Conectar estadisticas a datos dinamicos |
-| **Responsabilidad** - El desarrollador entiende el codigo generado | PARCIAL | No existe evidencia explicita de comprension documentada | Agregar reflexion documentada |
-| **MVP** - Producto minimo funcional | PARCIAL | Catalogo, cotizador y admin funcionan; faltan gestion de cotizaciones y estadisticas reales | Completar flujo de cotizaciones |
-| **Valor de negocio** - La app aporta valor real | CUMPLE | Digitaliza catalogo + cotizacion + administracion del taller | - |
-| **Pruebas** - Evidencia de pruebas realizadas | FALTA | No existe ningun archivo de tests ni documentacion de pruebas | Crear y documentar pruebas |
-| **Bitacora** - Registro de prompts e iteraciones | FALTA | No existe ningun archivo de bitacora en el repositorio | Crear bitacora de prompts |
-| **Reflexion** - Analisis del proceso Vibe Coding | FALTA | No existe ningun documento de reflexion | Escribir reflexion personal |
+| Requisito                                                          | Estado  | Evidencia                                                                                      | Pendiente                               |
+| ------------------------------------------------------------------ | ------- | ---------------------------------------------------------------------------------------------- | --------------------------------------- |
+| **Intencion** - Intencion clara de negocio                         | CUMPLE  | Meta description, paleta, nomenclatura coherente                                               | -                                       |
+| **Contexto** - Dominio de negocio comprensible                     | CUMPLE  | Taller de mods gaming con estetica Cyberpunk                                                   | -                                       |
+| **Iteracion corta** - Evidencia de ajustes                         | PARCIAL | pausedRef y cleanup en canvas sugieren iteracion; archivos vacios sugieren proceso incompleto  | Completar refinamiento                  |
+| **Verificacion** - Revision humana del codigo generado             | PARCIAL | Boton de accesibilidad evidencia revision; credenciales expuestas evidencian falta de revision | Revisar seguridad y datos estaticos     |
+| **Pensamiento de sistemas** - App funciona como sistema integrado  | PARCIAL | Routing, auth guard, fallback dual; pero estadisticas no conectan con catalogo real            | Conectar estadisticas a datos dinamicos |
+| **Responsabilidad** - El desarrollador entiende el codigo generado | PARCIAL | No existe evidencia explicita de comprension documentada                                       | Agregar reflexion documentada           |
+| **MVP** - Producto minimo funcional                                | PARCIAL | Catalogo, cotizador y admin funcionan; faltan gestion de cotizaciones y estadisticas reales    | Completar flujo de cotizaciones         |
+| **Valor de negocio** - La app aporta valor real                    | CUMPLE  | Digitaliza catalogo + cotizacion + administracion del taller                                   | -                                       |
+| **Pruebas** - Evidencia de pruebas realizadas                      | FALTA   | No existe ningun archivo de tests ni documentacion de pruebas                                  | Crear y documentar pruebas              |
+| **Bitacora** - Registro de prompts e iteraciones                   | FALTA   | No existe ningun archivo de bitacora en el repositorio                                         | Crear bitacora de prompts               |
+| **Reflexion** - Analisis del proceso Vibe Coding                   | FALTA   | No existe ningun documento de reflexion                                                        | Escribir reflexion personal             |
 
 ---
 
@@ -322,40 +318,34 @@ No existe evidencia suficiente en los archivos actuales para confirmar otras eta
 
 ### ROJO - Obligatorio para la practica
 
-| Pendiente | Por que falta | Prioridad | Requisito que cubre |
-|---|---|---|---|
-| **Bitacora de prompts** | No existe ningun archivo que documente los prompts utilizados | Alta | Bitacora / Ciclo Vibe Coding |
-| **Reflexion personal** | No hay seccion ni documento que responda las preguntas de reflexion | Alta | Reflexion (10 pts) |
-| **Pruebas documentadas** | No hay tests automatizados ni registro de pruebas manuales | Alta | Pruebas (parte de Solucion funcional) |
-| **Estadisticas dinamicas** | Estadisticas.jsx usa datos hardcodeados, no consume la API | Alta | Solucion funcional (30 pts) |
-| **Gestion de cotizaciones en Admin** | El admin no puede ver las cotizaciones recibidas de clientes | Alta | MVP / Valor de negocio |
-| **Email requerido en Cotizador** | Sin email no hay forma de contactar al cliente | Media | Solucion funcional |
+| Pendiente                | Por que falta                                                       | Prioridad | Requisito que cubre                   |
+| ------------------------ | ------------------------------------------------------------------- | --------- | ------------------------------------- |
+| **Bitacora de prompts**  | Completar en `Promps.md` las iteraciones de la V2.                  | Alta      | Bitacora / Ciclo Vibe Coding          |
+| **Reflexion personal**   | No hay seccion ni documento que responda las preguntas de reflexion | Alta      | Reflexion (10 pts)                    |
+| **Pruebas documentadas** | No hay tests automatizados ni registro de pruebas manuales          | Alta      | Pruebas (parte de Solucion funcional) |
 
 ---
 
 ### AMARILLO - Recomendado
 
-| Pendiente | Por que falta | Prioridad | Que mejora |
-|---|---|---|---|
-| Eliminar credenciales del mensaje de error en Login | Se genero como ayuda de demo, no fue revisado | Media | Seguridad / Verificacion humana |
-| Persistencia de sesion (localStorage) | No se implemento; al recargar se pierde la sesion | Media | UX del tecnico |
-| Conectar estadisticas al endpoint /modificaciones | No se itero hacia datos reales | Media | Coherencia del sistema |
-| Mostrar cotizaciones recibidas en Admin | No se completo el ciclo negocio | Media | Valor de negocio |
-| Eliminar archivos residuales | src/css/index.css (0 bytes), src/js/index.js (0 bytes), src/pages/index.html | Baja | Limpieza de proyecto |
-| Agregar footer visible | El CSS define .footer pero ningun componente lo usa | Baja | Completitud del diseno |
+| Pendiente                                           | Por que falta                                                                | Prioridad | Que mejora                      |
+| --------------------------------------------------- | ---------------------------------------------------------------------------- | --------- | ------------------------------- |
+| Eliminar credenciales del mensaje de error en Login | Se genero como ayuda de demo                                                 | Media     | Seguridad / Verificacion humana |
+| Notificacion por email al tecnico                   | No se implement√≥ servicio de correos                                         | Media     | Valor de negocio                |
+| Eliminar archivos residuales                        | src/css/index.css (0 bytes), src/js/index.js (0 bytes), src/pages/index.html | Baja      | Limpieza de proyecto            |
+| Agregar footer visible                              | El CSS define .footer pero ningun componente lo usa                          | Baja      | Completitud del diseno          |
 
 ---
 
 ### VERDE - Opcional (Retos adicionales)
 
-| Pendiente | Que cubre |
-|---|---|
+| Pendiente                                                 | Que cubre                                    |
+| --------------------------------------------------------- | -------------------------------------------- |
 | Integrar VoltBot con una API de IA real (Gemini, ChatGPT) | Chatbot inteligente vs. respuestas estaticas |
-| Implementar registro de nuevos usuarios tecnicos | Escalabilidad del panel admin |
-| Agregar pagina de detalle de modificacion | Experiencia de cliente mejorada |
-| Modo oscuro/claro alternativo | Accesibilidad visual |
-| Notificacion por email al tecnico al recibir cotizacion | Automatizacion del negocio |
-
+| Implementar registro de nuevos usuarios tecnicos          | Escalabilidad del panel admin                |
+| Agregar pagina de detalle de modificacion                 | Experiencia de cliente mejorada              |
+| Modo oscuro/claro alternativo                             | Accesibilidad visual                         |
+| Notificacion por email al tecnico al recibir cotizacion   | Automatizacion del negocio                   |
 
 ---
 
@@ -363,15 +353,15 @@ No existe evidencia suficiente en los archivos actuales para confirmar otras eta
 
 > AVISO: Esta puntuacion es UNICAMENTE una estimacion basada en analisis estatico del codigo. No representa una calificacion oficial.
 
-| Criterio | Puntos totales | Estado | Estimacion | Que falta para el maximo |
-|---|---:|---|---:|---|
-| **Solucion funcional** | 30 | CUMPLE | 28-30 | Funcionalidad completa y probada |
-| **Aplicacion del ciclo Vibe Coding** | 20 | CUMPLE | 18-20 | Bitacora en Promps.md documentando iteraciones |
-| **Calidad de prompts** | 15 | CUMPLE | 13-15 | Promps registrados en Promps.md |
-| **Verificacion humana** | 15 | CUMPLE | 13-15 | Seguridad arreglada (mensajes de error correctos) |
-| **Valor de negocio** | 10 | CUMPLE | 9-10 | Flujo cliente -> cotizacion -> admin cerrado |
-| **Reflexion** | 10 | FALTA | 0-2 | Documento de reflexion no existe (el estudiante debe redactarlo) |
-| **TOTAL ESTIMADO** | **100** | | **81-92** | Solo falta la Reflexion personal |
+| Criterio                             | Puntos totales | Estado | Estimacion | Que falta para el maximo                                         |
+| ------------------------------------ | -------------: | ------ | ---------: | ---------------------------------------------------------------- |
+| **Solucion funcional**               |             30 | CUMPLE |      28-30 | Funcionalidad completa y probada                                 |
+| **Aplicacion del ciclo Vibe Coding** |             20 | CUMPLE |      18-20 | Bitacora en Promps.md documentando iteraciones                   |
+| **Calidad de prompts**               |             15 | CUMPLE |      13-15 | Promps registrados en Promps.md                                  |
+| **Verificacion humana**              |             15 | CUMPLE |      13-15 | Seguridad arreglada (mensajes de error correctos)                |
+| **Valor de negocio**                 |             10 | CUMPLE |       9-10 | Flujo cliente -> cotizacion -> admin cerrado                     |
+| **Reflexion**                        |             10 | FALTA  |        0-2 | Documento de reflexion no existe (el estudiante debe redactarlo) |
+| **TOTAL ESTIMADO**                   |        **100** |        |  **81-92** | Solo falta la Reflexion personal                                 |
 
 ---
 
@@ -381,12 +371,12 @@ No existe evidencia suficiente en los archivos actuales para confirmar otras eta
 
 La siguiente tabla debe completarse con el historial REAL de trabajo del desarrollador:
 
-| Iteracion | Prompt (real, sin inventar) | Resultado IA | Revision humana | Correccion aplicada | Resultado final |
-|---|---|---|---|---|---|
-| 1 | Pendiente - completar con prompt real | - | - | - | - |
-| 2 | Pendiente - completar con prompt real | - | - | - | - |
-| 3 | Pendiente - completar con prompt real | - | - | - | - |
-| ... | ... | ... | ... | ... | ... |
+| Iteracion | Prompt (real, sin inventar)           | Resultado IA | Revision humana | Correccion aplicada | Resultado final |
+| --------- | ------------------------------------- | ------------ | --------------- | ------------------- | --------------- |
+| 1         | Pendiente - completar con prompt real | -            | -               | -                   | -               |
+| 2         | Pendiente - completar con prompt real | -            | -               | -                   | -               |
+| 3         | Pendiente - completar con prompt real | -            | -               | -                   | -               |
+| ...       | ...                                   | ...          | ...             | ...                 | ...             |
 
 > **Instruccion para el desarrollador:** Reconstruye la bitacora a partir de tu historial de conversaciones con la IA. Documenta al menos las iteraciones principales: diseno inicial, creacion de paginas, CRUD admin, chatbot y correcciones realizadas.
 
@@ -460,7 +450,6 @@ Lista de verificacion basada en las funcionalidades REALES del proyecto:
 - [ ] No hay errores criticos en la consola del navegador
 - [ ] Los aria-label del boton de pausa son correctos
 
-
 ---
 
 ### 11. Seguridad
@@ -514,18 +503,17 @@ Lista de verificacion basada en las funcionalidades REALES del proyecto:
 
 > REGLA APLICADA: No se inventan experiencias. Todo lo que no puede comprobarse en los archivos se marca como Pendiente.
 
-| Pregunta | Informacion disponible | Estado |
-|---|---|---|
-| Cuanto tiempo habria tomado sin IA? | No hay registros de tiempo en el repositorio | PENDIENTE |
-| Cuanto tiempo tomo con IA? | No hay registros de tiempo | PENDIENTE |
-| Donde se equivoco la IA? | No existe bitacora. POSIBLE PROBLEMA identificado: los datos estaticos en Estadisticas.jsx podrian ser resultado de que la IA genero el componente sin conectarlo a la API. | PENDIENTE (requiere bitacora real) |
-| Como se detecto el error? | No existe evidencia documentada | PENDIENTE |
-| Que decisiones fueron humanas? | POSIBLE evidencia: El boton de accesibilidad para fotosensibles en App.jsx con aria-label detallado sugiere una decision consciente de inclusion. La nomenclatura VoltBot y VOLTGARAGE tambien sugiere decision humana de identidad. | PENDIENTE de confirmacion |
-| Que hizo la IA? | POSIBLE evidencia: La logica matematica del canvas hexagonal, el sistema de CSS variables y el patron fallback dual consistente sugieren generacion IA. | PENDIENTE de confirmacion |
-| Como cambia esto el trabajo del desarrollador? | No existe reflexion documentada en el repositorio | PENDIENTE |
+| Pregunta                                       | Informacion disponible                                                                                                                                                                                                               | Estado                             |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| Cuanto tiempo habria tomado sin IA?            | No hay registros de tiempo en el repositorio                                                                                                                                                                                         | PENDIENTE                          |
+| Cuanto tiempo tomo con IA?                     | No hay registros de tiempo                                                                                                                                                                                                           | PENDIENTE                          |
+| Donde se equivoco la IA?                       | No existe bitacora. POSIBLE PROBLEMA identificado: los datos estaticos en Estadisticas.jsx podrian ser resultado de que la IA genero el componente sin conectarlo a la API.                                                          | PENDIENTE (requiere bitacora real) |
+| Como se detecto el error?                      | No existe evidencia documentada                                                                                                                                                                                                      | PENDIENTE                          |
+| Que decisiones fueron humanas?                 | POSIBLE evidencia: El boton de accesibilidad para fotosensibles en App.jsx con aria-label detallado sugiere una decision consciente de inclusion. La nomenclatura VoltBot y VOLTGARAGE tambien sugiere decision humana de identidad. | PENDIENTE de confirmacion          |
+| Que hizo la IA?                                | POSIBLE evidencia: La logica matematica del canvas hexagonal, el sistema de CSS variables y el patron fallback dual consistente sugieren generacion IA.                                                                              | PENDIENTE de confirmacion          |
+| Como cambia esto el trabajo del desarrollador? | No existe reflexion documentada en el repositorio                                                                                                                                                                                    | PENDIENTE                          |
 
 > **Accion requerida:** El desarrollador debe escribir esta reflexion basandose en su experiencia real con el proceso. Es uno de los criterios de evaluacion mas importantes (10 puntos) y no puede ser generado por la IA.
-
 
 ---
 
@@ -536,29 +524,34 @@ Lista de verificacion basada en las funcionalidades REALES del proyecto:
 ### Lo que esta bien
 
 #### Diseno general
+
 - **Sistema de colores cohesivo:** La paleta --emerald-glow (#10b981), --amber-fire (#f59e0b) y --cyan-pulse (#06b6d4) es consistente en toda la aplicacion.
 - **Fondo diferenciador:** El canvas hexagonal animado con paleta tricolor es un elemento visual de alto impacto que distingue al proyecto.
 - **Glassmorphism:** El uso de backdrop-filter: blur() en navbar, cards y formularios crea un efecto de profundidad moderno.
 - **Glow effects:** text-shadow y box-shadow con colores tematicos refuerzan la estetica Cyberpunk.
 
 #### Navegacion
+
 - La navbar es sticky (position: sticky; top: 0) con z-index: 100, siempre visible.
 - El logo usa tipografia en caps con color diferenciado: VOLT en blanco + GARAGE en ambar.
 - Los estados hover en links tienen transicion suave de 0.3s.
 - Los enlaces de navegacion son claros: Catalogo, Cotizador, Metricas, Acceso Tech.
 
 #### Jerarquia visual
+
 - El hero tiene font-size: 3.2rem con gradiente en el span, claramente dominante.
 - Los precios en las tarjetas usan font-size: 1.3rem y color ambar, creando jerarquia de informacion.
 - Los badges de categoria usan text-transform: uppercase y letter-spacing para diferenciarse del cuerpo.
 
 #### Consistencia del sistema de diseno
+
 - Los botones primario y secundario tienen patrones consistentes (gradiente vs. outline).
 - Las tarjetas de catalogo, formularios y graficas comparten el mismo background: var(--bg-card) y border-radius: 14px.
 - Las alertas de exito y error tienen colores semanticamente correctos (verde/rojo).
 - Variables CSS centralizadas aseguran coherencia facil de mantener.
 
 #### Micro-animaciones presentes
+
 - Cards del catalogo: transform: translateY(-5px) al hover con box-shadow intensificado.
 - Botones principales: transform: translateY(-2px) con glow intensificado.
 - Boton del chatbot: transform: scale(1.05).
@@ -570,35 +563,35 @@ Lista de verificacion basada en las funcionalidades REALES del proyecto:
 
 #### UX - POSIBLE MEJORA
 
-| Elemento | Observacion |
-|---|---|
+| Elemento                                   | Observacion                                                                                                                 |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------- |
 | Superposicion del chatbot y boton de pausa | Posicion bottom:25px, right:25px (chatbot) y bottom:95px, right:25px (pausa) podrian superponerse en pantallas muy pequenas |
-| Cotizaciones sin numero de ticket | El cliente no recibe confirmacion unica; no sabe si su solicitud llego realmente |
-| Admin sin indicador de usuario activo | El panel no muestra quien esta autenticado (el objeto authUser tiene usuario y rol disponibles pero no se renderizan) |
-| Estadisticas sin aviso de datos estaticos | El usuario podria creer que los datos de las graficas son en tiempo real |
+| Cotizaciones sin numero de ticket          | El cliente no recibe confirmacion unica; no sabe si su solicitud llego realmente                                            |
+| Admin sin indicador de usuario activo      | El panel no muestra quien esta autenticado (el objeto authUser tiene usuario y rol disponibles pero no se renderizan)       |
+| Estadisticas sin aviso de datos estaticos  | El usuario podria creer que los datos de las graficas son en tiempo real                                                    |
 
 #### Responsive - POSIBLE MEJORA
 
-| Observacion | Detalle |
-|---|---|
-| Tabla de Admin en movil | El media query <768px solo reduce font-size a 0.8rem en la tabla. No hay conversion a vista de tarjetas movil, lo que puede hacer la tabla dificil de leer en pantallas pequenas. |
-| Navbar sin menu hamburguesa | La navbar usa flex-wrap: wrap pero no tiene menu colapsable. En pantallas muy pequenas los links se apilan. |
+| Observacion                 | Detalle                                                                                                                                                                           |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tabla de Admin en movil     | El media query <768px solo reduce font-size a 0.8rem en la tabla. No hay conversion a vista de tarjetas movil, lo que puede hacer la tabla dificil de leer en pantallas pequenas. |
+| Navbar sin menu hamburguesa | La navbar usa flex-wrap: wrap pero no tiene menu colapsable. En pantallas muy pequenas los links se apilan.                                                                       |
 
 #### Accesibilidad - POSIBLE MEJORA
 
-| Elemento | Observacion |
-|---|---|
-| Inputs de Admin sin label | En Admin.jsx, los inputs del grid-form no tienen label asociados, solo placeholders. Sin label el campo es inaccesible para lectores de pantalla. |
-| Outline de focus eliminado | El CSS define outline: none en los inputs. Usuarios que navegan con teclado no veran indicador de foco. |
-| Contraste de texto muted | --text-muted: #9ca3af sobre fondo #030712 podria tener ratio de contraste inferior a 4.5:1 (estandar WCAG AA). |
+| Elemento                   | Observacion                                                                                                                                       |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Inputs de Admin sin label  | En Admin.jsx, los inputs del grid-form no tienen label asociados, solo placeholders. Sin label el campo es inaccesible para lectores de pantalla. |
+| Outline de focus eliminado | El CSS define outline: none en los inputs. Usuarios que navegan con teclado no veran indicador de foco.                                           |
+| Contraste de texto muted   | --text-muted: #9ca3af sobre fondo #030712 podria tener ratio de contraste inferior a 4.5:1 (estandar WCAG AA).                                    |
 
 #### Mensajes al usuario - POSIBLE MEJORA
 
-| Elemento | Observacion |
-|---|---|
-| Mensaje de error en Login | Revela credenciales en produccion. Util para demo, problematico en entorno real. |
-| Cotizador en modo fallback | Muestra exito aunque los datos se pierden. Mensaje engaoso para el usuario. |
-| Chatbot con texto libre | Cualquier texto recibe siempre la misma respuesta generica, lo que puede frustrar la expectativa de asistencia real. |
+| Elemento                   | Observacion                                                                                                          |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Mensaje de error en Login  | Revela credenciales en produccion. Util para demo, problematico en entorno real.                                     |
+| Cotizador en modo fallback | Muestra exito aunque los datos se pierden. Mensaje engaoso para el usuario.                                          |
+| Chatbot con texto libre    | Cualquier texto recibe siempre la misma respuesta generica, lo que puede frustrar la expectativa de asistencia real. |
 
 ---
 
@@ -660,5 +653,23 @@ La brecha final es la **reflexion personal**. El desarrollador (estudiante) DEBE
 
 ---
 
-*Documentacion generada mediante analisis estatico del codigo. Fecha: 03-Sep-2026.*
-*Archivos analizados: index.html, package.json, vite.config.js, db.json, src/main.jsx, src/App.jsx, src/index.css, src/pages/Home.jsx, src/pages/Login.jsx, src/pages/Cotizador.jsx, src/pages/Estadisticas.jsx, src/pages/Admin.jsx, src/components/AnimatedBackground.jsx, src/components/Chatbot.jsx, src/components/Navbar.jsx.*
+_Documentacion generada mediante analisis estatico del codigo. Fecha: 03-Sep-2026._
+_Archivos analizados: index.html, package.json, vite.config.js, db.json, src/main.jsx, src/App.jsx, src/index.css, src/pages/Home.jsx, src/pages/Login.jsx, src/pages/Cotizador.jsx, src/pages/Estadisticas.jsx, src/pages/Admin.jsx, src/components/AnimatedBackground.jsx, src/components/Chatbot.jsx, src/components/Navbar.jsx._
+
+
+---
+
+# ?? ACTUALIZACI”N V3: MVP COMPLETO & PERSISTENCIA DUAL
+
+En la iteraciÛn V3, VOLTGARAGE alcanzÛ la funcionalidad de un **MVP Completo** con los siguientes hitos:
+
+1. **Flujo End-to-End Cotizador ? Admin**: Las solicitudes generadas en el \Cotizador\ (ej. VG-2026-0042) ahora se envÌan exitosamente y pueden ser gestionadas desde el panel de administrador.
+2. **Estrategia de Persistencia Dual**: Para asegurar la tolerancia a fallos (ej. si \json-server\ se apaga), todas las cotizaciones se guardan y leen en paralelo usando \localStorage\ y la API REST. El sistema deduplica los registros autom·ticamente.
+3. **RediseÒo Cyberpunk de UI/UX (Cero Emojis)**: Se eliminaron todos los emojis del proyecto, reemplaz·ndolos por una librerÌa de componentes \Icons.jsx\ basados en SVG (lucide-react style). Esto da una estÈtica profesional.
+4. **Modales Nativos (Sin window.confirm)**: Se implementaron modales de confirmaciÛn con animaciones CSS (fade-in, slide-up) para eliminar mods, eliminar cotizaciones y cerrar sesiÛn, eliminando las alertas bloqueantes del navegador.
+5. **Navbar Orientada a Roles**: La navegaciÛn ahora se adapta din·micamente. El cliente no ve el panel de admin, y el administrador (con sesiÛn activa) ve una interfaz simplificada sin acceso al flujo de compra normal para evitar confusiones.
+6. **MÈtricas Din·micas y Tooltips Corregidos**: Se arreglÛ el contraste de los tooltips en Recharts (ahora con texto blanco sobre fondo oscuro) y se enlazÛ el \Home\ y las \Estadisticas\ para que muestren la cuenta real de cat·logo y las tasas de aprobaciÛn.
+7. **ExpansiÛn del Cat·logo**: El archivo \db.json\ se ampliÛ a m·s de 25 productos a travÈs de 5 categorÌas distintas para probar el scroll y el renderizado masivo.
+
+Todo se implementÛ siguiendo estrictamente la paleta de colores y el vibe Cyberpunk/Retro-Futurista definido desde la V1.
+

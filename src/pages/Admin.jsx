@@ -1,287 +1,554 @@
 import React, { useState, useEffect } from 'react';
+import { IconTrash, IconCheck, IconX, IconClock, IconCog, IconDocument, IconUser } from '../components/Icons';
 
-const FALLBACK = [
-  { id: '1', hardware: 'Game Boy Color', categoria: 'Consola Portátil', tipoMod: 'Carcasa Transparente Amber + IPS V3', precioEstimado: 135, tiempoDias: 3 },
-  { id: '2', hardware: 'Control PS5 DualSense', categoria: 'Mandos', tipoMod: 'Back Paddles + Joysticks Hall Effect', precioEstimado: 85, tiempoDias: 2 },
-];
+// =======================================================
+// Modal de Eliminación Cyberpunk (reemplaza window.confirm)
+// =======================================================
+const ModalConfirmDelete = ({ onConfirm, onCancel, itemName }) => (
+  <div className="modal-overlay" onClick={onCancel}>
+    <div className="modal-content modal-confirm" onClick={(e) => e.stopPropagation()}>
+      <div style={{ textAlign: 'center', marginBottom: '1.5rem' }}>
+        <IconTrash size={52} color="#ef4444" />
+      </div>
+      <h2 style={{ textAlign: 'center', color: 'var(--text-main)', marginBottom: '0.5rem', fontSize: '1.4rem' }}>
+        ¿Confirmar eliminación?
+      </h2>
+      <p style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+        Estás a punto de eliminar: <strong style={{ color: 'var(--amber-light)' }}>{itemName}</strong>
+      </p>
+      <p style={{ textAlign: 'center', color: '#ef4444', marginBottom: '2rem', fontSize: '0.85rem' }}>
+        Esta acción no se puede deshacer.
+      </p>
+      <div style={{ display: 'flex', gap: '1rem' }}>
+        <button
+          onClick={onCancel}
+          style={{ flex: 1, padding: '0.8rem', background: '#374151', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={onConfirm}
+          className="btn-primary"
+          style={{ flex: 1, padding: '0.8rem', background: 'linear-gradient(135deg, #b91c1c, #dc2626)', boxShadow: '0 0 10px rgba(220, 38, 38, 0.4)' }}
+        >
+          Eliminar
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
-const Admin = () => {
+// =======================================================
+// Main Admin Component
+// =======================================================
+const Admin = ({ authUser }) => {
+  const [activeTab, setActiveTab] = useState('cotizaciones');
+
+  // Inventario
   const [mods, setMods] = useState([]);
+  const [form, setForm] = useState({ hardware: '', categoria: '', tipoMod: '', precioEstimado: '', tiempoDias: '' });
+  const [editingId, setEditingId] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  // Cotizaciones
   const [cotizaciones, setCotizaciones] = useState([]);
-  const [form, setForm] = useState({ hardware: '', categoria: 'Consola Portátil', tipoMod: '', precioEstimado: '', tiempoDias: '' });
-  const [editId, setEditId] = useState(null);
-  const [msg, setMsg] = useState(null);
-  const [activeTab, setActiveTab] = useState('inventario');
+  const [filtroEstado, setFiltroEstado] = useState('Todas');
+  const [selectedCotizacion, setSelectedCotizacion] = useState(null);
 
-  useEffect(() => { cargar(); cargarCotizaciones(); }, []);
+  // Modales de eliminación
+  const [itemToDelete, setItemToDelete] = useState(null); // { type: 'mod' | 'cotizacion', id, name }
 
-  const cargar = () => {
+  useEffect(() => {
+    // 1. Cargar Mods del inventario
     fetch('http://localhost:3001/modificaciones')
-      .then((r) => r.json())
-      .then(setMods)
-      .catch(() => setMods(FALLBACK));
-  };
+      .then((res) => res.json())
+      .then((data) => setMods(data))
+      .catch((err) => console.error('Error cargando mods:', err));
 
-  const cargarCotizaciones = () => {
-    fetch('http://localhost:3001/cotizaciones')
-      .then((r) => r.json())
-      .then(setCotizaciones)
-      .catch(() => setCotizaciones([]));
-  };
-
-  const resetForm = () => {
-    setEditId(null);
-    setForm({ hardware: '', categoria: 'Consola Portátil', tipoMod: '', precioEstimado: '', tiempoDias: '' });
-  };
-
-  const showMsg = (text) => {
-    setMsg(text);
-    setTimeout(() => setMsg(null), 3000);
-  };
-
-  const handleSave = async (e) => {
-    e.preventDefault();
-    const data = { ...form, precioEstimado: Number(form.precioEstimado), tiempoDias: Number(form.tiempoDias) };
-
-    try {
-      if (editId) {
-        await fetch(`http://localhost:3001/modificaciones/${editId}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...data, id: editId }),
-        });
-        showMsg('✅ Modificación actualizada correctamente.');
-      } else {
-        await fetch('http://localhost:3001/modificaciones', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...data, id: Date.now().toString() }),
-        });
-        showMsg('✅ Nueva modificación agregada al catálogo.');
+    // 2. Cargar Cotizaciones (Estrategia Dual: LocalStorage + API)
+    const loadCotizaciones = async () => {
+      let merged = [];
+      try {
+        const res = await fetch('http://localhost:3001/cotizaciones');
+        if (res.ok) {
+          const apiData = await res.json();
+          merged = [...apiData];
+        }
+      } catch (err) {
+        console.error('API no disponible para cotizaciones, usando solo local.');
       }
-      cargar();
-      resetForm();
-    } catch {
-      // Modo local sin servidor
-      if (editId) {
-        setMods((prev) => prev.map((m) => m.id === editId ? { ...data, id: editId } : m));
-      } else {
-        setMods((prev) => [...prev, { ...data, id: Date.now().toString() }]);
+
+      // Mezclar con localStorage y deduplicar por ID
+      try {
+        const localData = JSON.parse(localStorage.getItem('volt_cotizaciones') || '[]');
+        localData.forEach(localItem => {
+          if (!merged.find(m => m.id === localItem.id)) {
+            merged.push(localItem);
+          }
+        });
+      } catch (err) {
+        console.error('Error leyendo localStorage cotizaciones:', err);
       }
-      showMsg('✅ Operación realizada (modo local).');
-      resetForm();
-    }
-  };
 
-  const handleEdit = (mod) => {
-    setEditId(mod.id);
-    setForm({ hardware: mod.hardware, categoria: mod.categoria, tipoMod: mod.tipoMod, precioEstimado: mod.precioEstimado, tiempoDias: mod.tiempoDias });
-  };
+      // Ordenar por fecha descendente (más recientes primero)
+      merged.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+      setCotizaciones(merged);
+      setLoading(false);
+    };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Eliminar esta modificación del catálogo?')) return;
+    loadCotizaciones();
+  }, []);
+
+  // Sync cotizaciones to API and LocalStorage
+  const updateCotizacionState = async (id, nuevoEstado) => {
+    const updatedList = cotizaciones.map(c => c.id === id ? { ...c, estado: nuevoEstado } : c);
+    setCotizaciones(updatedList);
+    
+    // Update local storage
     try {
-      await fetch(`http://localhost:3001/modificaciones/${id}`, { method: 'DELETE' });
-      cargar();
-    } catch {
-      setMods((prev) => prev.filter((m) => m.id !== id));
+      localStorage.setItem('volt_cotizaciones', JSON.stringify(updatedList));
+    } catch (err) {
+      console.error('Error actualizando localStorage:', err);
     }
-    showMsg('🗑️ Modificación eliminada.');
-  };
-
-  const handleUpdateCotizacionStatus = async (id, nuevoEstado) => {
-    const cotizacion = cotizaciones.find(c => c.id === id);
-    if (!cotizacion) return;
+    
+    // Try to update API
     try {
       await fetch(`http://localhost:3001/cotizaciones/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado }),
+      });
+    } catch (err) {
+      // Fallo silencioso, localStorage ya tiene el dato
+    }
+    
+    if (selectedCotizacion?.id === id) {
+      setSelectedCotizacion(prev => ({ ...prev, estado: nuevoEstado }));
+    }
+  };
+
+  const handleActualizarEstado = (id, nuevoEstado) => {
+    updateCotizacionState(id, nuevoEstado);
+  };
+
+  const confirmarEliminacion = () => {
+    if (!itemToDelete) return;
+
+    if (itemToDelete.type === 'cotizacion') {
+      const updatedList = cotizaciones.filter(c => c.id !== itemToDelete.id);
+      setCotizaciones(updatedList);
+      
+      try {
+        localStorage.setItem('volt_cotizaciones', JSON.stringify(updatedList));
+      } catch (err) {
+        console.error('Error localStorage:', err);
+      }
+
+      fetch(`http://localhost:3001/cotizaciones/${itemToDelete.id}`, { method: 'DELETE' }).catch(() => {});
+      if (selectedCotizacion?.id === itemToDelete.id) setSelectedCotizacion(null);
+    } 
+    else if (itemToDelete.type === 'mod') {
+      setMods(mods.filter((m) => m.id !== itemToDelete.id));
+      fetch(`http://localhost:3001/modificaciones/${itemToDelete.id}`, { method: 'DELETE' }).catch(() => {});
+    }
+
+    setItemToDelete(null);
+  };
+
+  const handleCreateOrUpdateMod = (e) => {
+    e.preventDefault();
+    if (editingId) {
+      const updated = { ...form, id: editingId, disponible: true };
+      setMods(mods.map((m) => (m.id === editingId ? updated : m)));
+      fetch(`http://localhost:3001/modificaciones/${editingId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...cotizacion, estado: nuevoEstado }),
-      });
-      cargarCotizaciones();
-      showMsg('✅ Estado de cotización actualizado.');
-    } catch {
-      setCotizaciones((prev) => prev.map(c => c.id === id ? { ...c, estado: nuevoEstado } : c));
-      showMsg('✅ Estado actualizado (modo local).');
+        body: JSON.stringify(updated),
+      }).catch(() => {});
+    } else {
+      const newMod = { ...form, id: String(Date.now()), disponible: true };
+      setMods([...mods, newMod]);
+      fetch('http://localhost:3001/modificaciones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMod),
+      }).catch(() => {});
+    }
+    setForm({ hardware: '', categoria: '', tipoMod: '', precioEstimado: '', tiempoDias: '' });
+    setEditingId(null);
+  };
+
+  const handleEditMod = (mod) => {
+    setForm(mod);
+    setEditingId(mod.id);
+  };
+
+  const getStatusColor = (estado) => {
+    switch (estado) {
+      case 'Aprobada': return 'var(--emerald-glow)';
+      case 'Rechazada': return '#ef4444';
+      case 'En revisión': return 'var(--cyan-pulse)';
+      default: return 'var(--amber-light)';
     }
   };
 
-  const handleDeleteCotizacion = async (id) => {
-    if (!window.confirm('¿Eliminar esta cotización?')) return;
-    try {
-      await fetch(`http://localhost:3001/cotizaciones/${id}`, { method: 'DELETE' });
-      cargarCotizaciones();
-      showMsg('🗑️ Cotización eliminada.');
-    } catch {
-      setCotizaciones((prev) => prev.filter(c => c.id !== id));
-      showMsg('🗑️ Cotización eliminada (modo local).');
-    }
+  const cotizacionesFiltradas = filtroEstado === 'Todas' ? cotizaciones : cotizaciones.filter(c => c.estado === filtroEstado);
+  
+  // Estadísticas rápidas cotizaciones
+  const statsCotiz = {
+    total: cotizaciones.length,
+    pendientes: cotizaciones.filter(c => c.estado === 'Pendiente').length,
+    revision: cotizaciones.filter(c => c.estado === 'En revisión').length,
+    aprobadas: cotizaciones.filter(c => c.estado === 'Aprobada').length
   };
+
+  if (loading) {
+    return <div className="page-container"><p className="loading-text">Cargando panel...</p></div>;
+  }
 
   return (
-    <div className="page-container">
-      <h1 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>
-        Panel Técnico <span style={{ color: 'var(--amber-fire)' }}>CRUD</span>
-      </h1>
-      <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
-        Gestiona el inventario y los servicios del taller.
-      </p>
+    <div className="page-container" style={{ maxWidth: '1200px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h1 style={{ fontSize: '2rem' }}>Panel <span style={{ color: 'var(--amber-fire)' }}>Administrativo</span></h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.8rem', background: 'rgba(17,24,39,0.5)', padding: '0.5rem 1rem', borderRadius: '20px', border: '1px solid #1f2937' }}>
+          <IconUser size={16} color="var(--emerald-glow)" />
+          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Técnico: <strong style={{ color: 'white' }}>{authUser?.usuario}</strong></span>
+        </div>
+      </div>
 
-      {msg && <div className="alert-success">{msg}</div>}
-
-      <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
+      <div className="admin-tabs">
         <button 
-          onClick={() => setActiveTab('inventario')}
-          className={activeTab === 'inventario' ? 'btn-primary' : 'btn-secondary'}
-          style={{ padding: '0.6rem 1.2rem', borderRadius: '8px', cursor: 'pointer', border: 'none', background: activeTab === 'inventario' ? 'var(--emerald-glow)' : '#374151', color: '#fff' }}
-        >
-          📦 Inventario
-        </button>
-        <button 
+          className={`tab-btn ${activeTab === 'cotizaciones' ? 'active' : ''}`}
           onClick={() => setActiveTab('cotizaciones')}
-          className={activeTab === 'cotizaciones' ? 'btn-primary' : 'btn-secondary'}
-          style={{ padding: '0.6rem 1.2rem', borderRadius: '8px', cursor: 'pointer', border: 'none', background: activeTab === 'cotizaciones' ? 'var(--emerald-glow)' : '#374151', color: '#fff' }}
         >
-          ✉️ Cotizaciones ({cotizaciones.length})
+          <IconDocument size={16} /> Solicitudes Recibidas ({cotizaciones.length})
+        </button>
+        <button 
+          className={`tab-btn ${activeTab === 'inventario' ? 'active' : ''}`}
+          onClick={() => setActiveTab('inventario')}
+        >
+          <IconCog size={16} /> Catálogo de Mods ({mods.length})
         </button>
       </div>
 
-      {activeTab === 'inventario' ? (
-        <>
-          {/* Formulario */}
-      <div className="form-admin" style={{ marginBottom: '2.5rem' }}>
-        <h3 style={{ marginBottom: '0.5rem', color: 'var(--amber-light)' }}>
-          {editId ? '✏️ Editar Modificación' : '➕ Nueva Modificación'}
-        </h3>
-        <form onSubmit={handleSave}>
-          <div className="grid-form">
-            <div>
-              <label htmlFor="hardware" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.85rem' }}>Hardware / Consola *</label>
-              <input id="hardware" type="text" placeholder="Ej: GameBoy" value={form.hardware}
-                onChange={(e) => setForm({ ...form, hardware: e.target.value })} required />
+      {/* ============================================================== */}
+      {/* PESTAÑA: COTIZACIONES RECIBIDAS */}
+      {/* ============================================================== */}
+      {activeTab === 'cotizaciones' && (
+        <div className="admin-content-section fade-in">
+          
+          <div className="status-pills-container" style={{ marginBottom: '2rem' }}>
+            <div className="status-pill total">
+              <span className="count">{statsCotiz.total}</span>
+              <span className="label">Total</span>
             </div>
-            <div>
-              <label htmlFor="categoria" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.85rem' }}>Categoría</label>
-              <select id="categoria" value={form.categoria} onChange={(e) => setForm({ ...form, categoria: e.target.value })}>
-                <option value="Consola Portátil">Consola Portátil</option>
-                <option value="Mandos">Mandos / Controles</option>
-                <option value="Teclados Mecánicos">Teclados Mecánicos</option>
-                <option value="Retro Gaming">Retro Gaming</option>
-                <option value="PC Custom">PC Custom</option>
-              </select>
+            <div className="status-pill pendientes">
+              <span className="count">{statsCotiz.pendientes}</span>
+              <span className="label">Pendientes</span>
             </div>
-            <div>
-              <label htmlFor="tipoMod" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.85rem' }}>Descripción del Mod *</label>
-              <input id="tipoMod" type="text" placeholder="Ej: IPS V3" value={form.tipoMod}
-                onChange={(e) => setForm({ ...form, tipoMod: e.target.value })} required />
+            <div className="status-pill revision">
+              <span className="count">{statsCotiz.revision}</span>
+              <span className="label">En Revisión</span>
             </div>
-            <div>
-              <label htmlFor="precio" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.85rem' }}>Precio ($USD)</label>
-              <input id="precio" type="number" placeholder="Ej: 100" value={form.precioEstimado}
-                onChange={(e) => setForm({ ...form, precioEstimado: e.target.value })} min="0" />
-            </div>
-            <div>
-              <label htmlFor="tiempo" style={{ display: 'block', marginBottom: '0.3rem', fontSize: '0.85rem' }}>Tiempo (Días)</label>
-              <input id="tiempo" type="number" placeholder="Ej: 3" value={form.tiempoDias}
-                onChange={(e) => setForm({ ...form, tiempoDias: e.target.value })} min="1" />
+            <div className="status-pill aprobadas">
+              <span className="count">{statsCotiz.aprobadas}</span>
+              <span className="label">Aprobadas</span>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-            <button type="submit" className="btn-primary">
-              {editId ? '💾 Guardar Cambios' : '➕ Agregar al Catálogo'}
-            </button>
-            {editId && (
-              <button type="button" onClick={resetForm}
-                style={{ padding: '0.8rem 1.5rem', background: '#374151', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 600 }}>
-                Cancelar
-              </button>
-            )}
-          </div>
-        </form>
-      </div>
 
-      {/* Tabla */}
-      <h2 style={{ marginBottom: '0.5rem', fontSize: '1.2rem', color: 'var(--amber-light)' }}>
-        Inventario Actual ({mods.length} mods)
-      </h2>
-      <table className="tabla-admin">
-        <thead>
-          <tr>
-            <th>Hardware</th>
-            <th>Categoría</th>
-            <th>Modificación</th>
-            <th>Precio</th>
-            <th>Días</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {mods.map((m) => (
-            <tr key={m.id}>
-              <td>{m.hardware}</td>
-              <td><span className="badge-cat" style={{ fontSize: '0.7rem' }}>{m.categoria}</span></td>
-              <td style={{ maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.tipoMod}</td>
-              <td style={{ color: 'var(--amber-light)', fontWeight: 700 }}>${m.precioEstimado}</td>
-              <td style={{ color: 'var(--emerald-glow)' }}>{m.tiempoDias}d</td>
-              <td>
-                <button onClick={() => handleEdit(m)} className="btn-edit">Editar</button>
-                <button onClick={() => handleDelete(m.id)} className="btn-delete">Eliminar</button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      </>
-        
-      ) : (
-        <>
-          <h2 style={{ marginBottom: '0.5rem', fontSize: '1.2rem', color: 'var(--amber-light)' }}>
-            Cotizaciones Recibidas ({cotizaciones.length})
-          </h2>
-          <div className="table-responsive">
-          <table className="tabla-admin">
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Cliente/Email</th>
-                <th>Equipo & Mod</th>
-                <th>Presupuesto</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {cotizaciones.length === 0 && <tr><td colSpan="6" style={{textAlign:'center'}}>No hay cotizaciones registradas.</td></tr>}
-              {cotizaciones.map((c) => (
-                <tr key={c.id}>
-                  <td style={{ fontSize: '0.85rem' }}>{c.fecha || 'N/A'}</td>
-                  <td>{c.email || 'Sin email'}</td>
-                  <td>
-                    <strong>{c.hardware}</strong><br/>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{c.tipoMod}</span>
-                  </td>
-                  <td style={{ color: 'var(--amber-light)' }}>${c.presupuesto || '0'}</td>
-                  <td>
-                    <select 
-                      value={c.estado || 'Pendiente'}
-                      onChange={(e) => handleUpdateCotizacionStatus(c.id, e.target.value)}
-                      style={{ padding: '0.2rem', borderRadius: '4px', background: '#1f2937', color: 'white', border: '1px solid #374151' }}
-                    >
-                      <option value="Pendiente">Pendiente</option>
-                      <option value="En revisión">En revisión</option>
-                      <option value="Aprobada">Aprobada</option>
-                      <option value="Rechazada">Rechazada</option>
-                    </select>
-                  </td>
-                  <td>
-                    <button onClick={() => handleDeleteCotizacion(c.id)} className="btn-delete">Eliminar</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
+            <h2 style={{ fontSize: '1.4rem' }}>Bandeja de Entrada</h2>
+            <select 
+              value={filtroEstado} 
+              onChange={(e) => setFiltroEstado(e.target.value)}
+              style={{ padding: '0.5rem', background: '#111827', color: 'white', border: '1px solid #374151', borderRadius: '8px' }}
+            >
+              <option value="Todas">Mostrar Todas</option>
+              <option value="Pendiente">Solo Pendientes</option>
+              <option value="En revisión">Solo En Revisión</option>
+              <option value="Aprobada">Solo Aprobadas</option>
+              <option value="Rechazada">Solo Rechazadas</option>
+            </select>
           </div>
-        </>
+
+          {cotizacionesFiltradas.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '4rem 1rem', background: '#0b0f19', borderRadius: '12px', border: '1px dashed #374151' }}>
+              <IconDocument size={48} color="#374151" />
+              <p style={{ color: 'var(--text-muted)', marginTop: '1rem' }}>No hay solicitudes en esta vista.</p>
+            </div>
+          ) : (
+            <div className="table-responsive">
+              <table className="tabla-admin">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Fecha</th>
+                    <th>Cliente</th>
+                    <th>Equipo</th>
+                    <th>Estimación</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {cotizacionesFiltradas.map((cot) => {
+                    const date = new Date(cot.fecha).toLocaleDateString();
+                    const color = getStatusColor(cot.estado);
+                    return (
+                      <tr key={cot.id}>
+                        <td style={{ fontWeight: 700, color: 'var(--amber-light)', fontSize: '0.85rem' }}>{cot.numeroSolicitud}</td>
+                        <td style={{ fontSize: '0.85rem' }}>{date}</td>
+                        <td>{cot.nombre || cot.email?.split('@')[0]}</td>
+                        <td style={{ fontSize: '0.9rem' }}>{cot.equipo}</td>
+                        <td style={{ color: 'var(--emerald-glow)' }}>${cot.precioEstimado}</td>
+                        <td>
+                          <span style={{ 
+                            background: `${color}22`, 
+                            color: color, 
+                            padding: '0.3rem 0.6rem', 
+                            borderRadius: '12px', 
+                            fontSize: '0.75rem', 
+                            fontWeight: 700,
+                            border: `1px solid ${color}44`
+                          }}>
+                            {cot.estado}
+                          </span>
+                        </td>
+                        <td>
+                          <button 
+                            className="btn-action edit" 
+                            title="Ver detalles"
+                            onClick={() => setSelectedCotizacion(cot)}
+                          >
+                            <IconDocument size={15} />
+                          </button>
+                          <button 
+                            className="btn-action delete" 
+                            title="Eliminar"
+                            onClick={() => setItemToDelete({ type: 'cotizacion', id: cot.id, name: cot.numeroSolicitud })}
+                          >
+                            <IconTrash size={15} />
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* PESTAÑA: INVENTARIO / CATALOGO */}
+      {/* ============================================================== */}
+      {activeTab === 'inventario' && (
+        <div className="admin-content-section fade-in">
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', alignItems: 'start' }}>
+            
+            {/* Formulario */}
+            <div className="form-card" style={{ padding: '1.5rem', marginTop: 0 }}>
+              <h3 style={{ marginBottom: '1.5rem', color: 'var(--emerald-glow)' }}>
+                {editingId ? 'Editar Módulo' : 'Nuevo Módulo'}
+              </h3>
+              <form onSubmit={handleCreateOrUpdateMod} className="grid-form" style={{ gridTemplateColumns: '1fr', gap: '1rem' }}>
+                <input
+                  type="text"
+                  placeholder="Equipo (ej: DualSense)"
+                  value={form.hardware}
+                  onChange={(e) => setForm({ ...form, hardware: e.target.value })}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Categoría (ej: Mandos)"
+                  value={form.categoria}
+                  onChange={(e) => setForm({ ...form, categoria: e.target.value })}
+                  required
+                />
+                <input
+                  type="text"
+                  placeholder="Descripción del mod"
+                  value={form.tipoMod}
+                  onChange={(e) => setForm({ ...form, tipoMod: e.target.value })}
+                  required
+                />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                  <input
+                    type="number"
+                    placeholder="Precio USD"
+                    value={form.precioEstimado}
+                    onChange={(e) => setForm({ ...form, precioEstimado: e.target.value })}
+                    required
+                  />
+                  <input
+                    type="number"
+                    placeholder="Días"
+                    value={form.tiempoDias}
+                    onChange={(e) => setForm({ ...form, tiempoDias: e.target.value })}
+                    required
+                  />
+                </div>
+                <button type="submit" className="btn-primary" style={{ marginTop: '0.5rem' }}>
+                  <IconCheck size={16} /> {editingId ? 'Guardar Cambios' : 'Registrar Módulo'}
+                </button>
+                {editingId && (
+                  <button type="button" className="btn-secondary" onClick={() => { setEditingId(null); setForm({ hardware: '', categoria: '', tipoMod: '', precioEstimado: '', tiempoDias: '' }); }}>
+                    Cancelar edición
+                  </button>
+                )}
+              </form>
+            </div>
+
+            {/* Tabla */}
+            <div className="table-responsive">
+              <table className="tabla-admin">
+                <thead>
+                  <tr>
+                    <th>Hardware</th>
+                    <th>Categoría</th>
+                    <th>Modificación</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {mods.map((mod) => (
+                    <tr key={mod.id}>
+                      <td style={{ fontWeight: 'bold' }}>{mod.hardware}</td>
+                      <td>{mod.categoria}</td>
+                      <td style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{mod.tipoMod}</td>
+                      <td style={{ color: 'var(--amber-light)' }}>${mod.precioEstimado}</td>
+                      <td>
+                        <button className="btn-action edit" onClick={() => handleEditMod(mod)} title="Editar"><IconCog size={15} /></button>
+                        <button className="btn-action delete" onClick={() => setItemToDelete({ type: 'mod', id: mod.id, name: mod.hardware })} title="Eliminar"><IconTrash size={15} /></button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* MODAL: DETALLE DE COTIZACIÓN */}
+      {/* ============================================================== */}
+      {selectedCotizacion && (
+        <div className="modal-overlay" onClick={() => setSelectedCotizacion(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid #1f2937', paddingBottom: '1rem' }}>
+              <h2 style={{ fontSize: '1.5rem', color: 'var(--amber-light)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <IconDocument size={24} /> {selectedCotizacion.numeroSolicitud}
+              </h2>
+              <button onClick={() => setSelectedCotizacion(null)} className="btn-action" style={{ background: 'transparent' }}><IconX size={20} color="white" /></button>
+            </div>
+
+            <div className="modal-grid-info">
+              <div className="info-block">
+                <label>Cliente</label>
+                <p>{selectedCotizacion.nombre || 'N/A'}</p>
+              </div>
+              <div className="info-block">
+                <label>Email de Contacto</label>
+                <p>{selectedCotizacion.email}</p>
+              </div>
+              <div className="info-block">
+                <label>Contacto Pref.</label>
+                <p>{selectedCotizacion.preferenciaContacto || 'Email'}</p>
+              </div>
+              <div className="info-block">
+                <label>Fecha Solicitud</label>
+                <p>{new Date(selectedCotizacion.fecha).toLocaleString()}</p>
+              </div>
+              
+              <div className="info-block full-width" style={{ background: 'rgba(16,185,129,0.05)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                <label style={{ color: 'var(--emerald-glow)' }}>Proyecto Requerido</label>
+                <p style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '0.3rem' }}>{selectedCotizacion.equipo}</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>{selectedCotizacion.modificacion}</p>
+              </div>
+
+              {selectedCotizacion.detalles && (
+                <div className="info-block full-width">
+                  <label>Detalles del cliente</label>
+                  <p style={{ fontStyle: 'italic', fontSize: '0.9rem', lineHeight: '1.4', background: '#030712', padding: '0.8rem', borderRadius: '8px' }}>
+                    "{selectedCotizacion.detalles}"
+                  </p>
+                </div>
+              )}
+
+              <div className="info-block">
+                <label>Presupuesto Objetivo</label>
+                <p style={{ color: 'var(--text-main)', fontSize: '1.1rem' }}>
+                  {selectedCotizacion.presupuesto ? `$${selectedCotizacion.presupuesto} USD` : 'No especificado'}
+                </p>
+              </div>
+              <div className="info-block">
+                <label>Estimación VOLTGARAGE</label>
+                <p style={{ color: 'var(--emerald-glow)', fontSize: '1.3rem', fontWeight: 800 }}>
+                  ${selectedCotizacion.precioEstimado} USD
+                </p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--amber-light)', display: 'flex', alignItems: 'center', gap: '0.2rem', marginTop: '0.2rem' }}>
+                  <IconClock size={12} /> {selectedCotizacion.tiempoEstimado} días
+                </p>
+              </div>
+              
+              <div className="info-block full-width" style={{ textAlign: 'center', background: '#0b0f19' }}>
+                <label>Estado Actual</label>
+                <span style={{ 
+                  display: 'inline-block',
+                  background: `${getStatusColor(selectedCotizacion.estado)}22`, 
+                  color: getStatusColor(selectedCotizacion.estado), 
+                  padding: '0.4rem 1rem', 
+                  borderRadius: '20px', 
+                  fontSize: '1rem', 
+                  fontWeight: 700,
+                  border: `1px solid ${getStatusColor(selectedCotizacion.estado)}`
+                }}>
+                  {selectedCotizacion.estado}
+                </span>
+              </div>
+            </div>
+
+            <div className="modal-actions" style={{ display: 'flex', gap: '0.8rem', marginTop: '2rem', borderTop: '1px solid #1f2937', paddingTop: '1.5rem' }}>
+              <button 
+                className="btn-status review" 
+                onClick={() => handleActualizarEstado(selectedCotizacion.id, 'En revisión')}
+                disabled={selectedCotizacion.estado === 'En revisión'}
+              >
+                <IconClock size={16} /> Poner en Revisión
+              </button>
+              <button 
+                className="btn-status approve" 
+                onClick={() => handleActualizarEstado(selectedCotizacion.id, 'Aprobada')}
+                disabled={selectedCotizacion.estado === 'Aprobada'}
+              >
+                <IconCheck size={16} /> Aprobar Proyecto
+              </button>
+              <button 
+                className="btn-status reject" 
+                onClick={() => handleActualizarEstado(selectedCotizacion.id, 'Rechazada')}
+                disabled={selectedCotizacion.estado === 'Rechazada'}
+              >
+                <IconX size={16} /> Rechazar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ============================================================== */}
+      {/* MODAL: CONFIRMACIÓN ELIMINAR */}
+      {/* ============================================================== */}
+      {itemToDelete && (
+        <ModalConfirmDelete 
+          itemName={itemToDelete.name}
+          onConfirm={confirmarEliminacion}
+          onCancel={() => setItemToDelete(null)}
+        />
       )}
     </div>
   );
