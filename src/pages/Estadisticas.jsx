@@ -1,26 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
-const dataPrecios = [
-  { name: 'GBC IPS Mod', precio: 135 },
-  { name: 'DualSense Paddles', precio: 85 },
-  { name: 'Switch OLED Shell', precio: 160 },
-  { name: 'Keyboard 75%', precio: 190 },
-  { name: 'GBA SP USB-C', precio: 110 },
-  { name: 'Xbox Elite', precio: 95 },
-];
-
-const dataCategorias = [
-  { name: 'Consolas Portátiles', value: 50 },
-  { name: 'Mandos / Controls', value: 30 },
-  { name: 'Teclados Mecánicos', value: 20 },
+const FALLBACK_MODS = [
+  { id: '1', hardware: 'GBC IPS Mod', categoria: 'Consola Portátil', tipoMod: 'Carcasa + IPS', precioEstimado: 135, tiempoDias: 3 },
+  { id: '2', hardware: 'DualSense Paddles', categoria: 'Mandos', tipoMod: 'Paddles + Hall', precioEstimado: 85, tiempoDias: 2 },
+  { id: '3', hardware: 'Switch OLED Shell', categoria: 'Consola Portátil', tipoMod: 'Shell clear', precioEstimado: 160, tiempoDias: 4 },
+  { id: '4', hardware: 'Keyboard 75%', categoria: 'Teclados Mecánicos', tipoMod: 'Switches + Lube', precioEstimado: 190, tiempoDias: 5 },
 ];
 
 const COLORS = ['#10b981', '#f59e0b', '#06b6d4'];
 
-const tooltipStyle = { background: '#111827', border: '1px solid #1f2937', borderRadius: '8px', color: '#f9fafb' };
+const tooltipStyle = { background: '#111827', border: '1px solid #ffffffff', borderRadius: '8px', color: '#f9fafb' };
 
 const Estadisticas = () => {
+  const [mods, setMods] = useState([]);
+  const [isLocal, setIsLocal] = useState(false);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/modificaciones')
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(setMods)
+      .catch(() => {
+        setMods(FALLBACK_MODS);
+        setIsLocal(true);
+      });
+  }, []);
+
+  const dataPrecios = mods.map(m => ({ name: m.hardware, precio: Number(m.precioEstimado) }));
+  
+  const catCount = mods.reduce((acc, m) => {
+    acc[m.categoria] = (acc[m.categoria] || 0) + 1;
+    return acc;
+  }, {});
+  
+  const dataCategorias = Object.keys(catCount).map(key => ({
+    name: key,
+    value: Math.round((catCount[key] / mods.length) * 100) || 0
+  }));
+
   return (
     <div className="page-container">
       <h1 style={{ fontSize: '2.2rem', marginBottom: '0.5rem' }}>
@@ -29,6 +49,8 @@ const Estadisticas = () => {
       <p style={{ color: 'var(--text-muted)', marginBottom: '2rem' }}>
         Análisis de precios, demanda y distribución por categorías del taller.
       </p>
+
+      {isLocal && <div className="alert-error" style={{ marginBottom: '1.5rem' }}>⚠️ Servidor no disponible. Mostrando datos de demostración locales.</div>}
 
       <div className="grid-charts">
         <div className="chart-box">
@@ -84,14 +106,14 @@ const Estadisticas = () => {
             </tr>
           </thead>
           <tbody>
-            {dataPrecios.map((item, i) => (
-              <tr key={i}>
-                <td>{item.name}</td>
-                <td style={{ color: 'var(--amber-light)' }}>${item.precio} USD</td>
-                <td style={{ color: 'var(--emerald-glow)' }}>2–5 días</td>
+            {mods.map((item, i) => (
+              <tr key={item.id}>
+                <td>{item.hardware}</td>
+                <td style={{ color: 'var(--amber-light)' }}>${item.precioEstimado} USD</td>
+                <td style={{ color: 'var(--emerald-glow)' }}>{item.tiempoDias} días</td>
                 <td>
                   <span style={{
-                    background: i < 2 ? 'rgba(16,185,129,0.2)' : 'rgba(245,158,11,0.2)',
+                    background: i < 2 ? 'rgba(189, 202, 198, 0.2)' : 'rgba(245,158,11,0.2)',
                     color: i < 2 ? 'var(--emerald-glow)' : 'var(--amber-light)',
                     padding: '0.2rem 0.6rem',
                     borderRadius: '12px',
