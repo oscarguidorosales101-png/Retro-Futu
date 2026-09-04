@@ -626,3 +626,310 @@ body {
   .tabla-admin { font-size: 0.8rem; }
   .tabla-admin th, .tabla-admin td { padding: 0.7rem; }
 }
+
+/* ── Cotizador V2 Styles ── */
+.mods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.mod-checkbox-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.8rem;
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid var(--border-card);
+  padding: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.mod-checkbox-label:hover {
+  border-color: var(--emerald-glow);
+  background: rgba(16, 185, 129, 0.05);
+}
+
+.mod-checkbox-label.selected {
+  border-color: var(--emerald-glow);
+  background: rgba(16, 185, 129, 0.1);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.2);
+}
+
+.mod-checkbox-label input[type="checkbox"] {
+  margin-top: 0.2rem;
+  width: auto;
+  cursor: pointer;
+  accent-color: var(--emerald-glow);
+}
+
+.mod-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.mod-name {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+}
+
+.mod-desc {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  line-height: 1.3;
+  margin-bottom: 0.4rem;
+}
+
+.mod-meta {
+  font-size: 0.8rem;
+  color: var(--amber-light);
+  font-weight: 600;
+}
+
+.quote-summary {
+  background: rgba(245, 158, 11, 0.05);
+  border: 1px solid var(--amber-fire);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin: 2rem 0;
+}
+
+.quote-summary h3 {
+  color: var(--amber-light);
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.quote-summary p {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+.quote-summary ul {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+/* ── Admin Modal & Badges ── */
+.status-pill {
+  padding: 0.25rem 0.6rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+.status-pendiente { background: rgba(245, 158, 11, 0.2); color: var(--amber-light); }
+.status-revision { background: rgba(6, 182, 212, 0.2); color: var(--cyan-pulse); }
+.status-aprobada { background: rgba(16, 185, 129, 0.2); color: var(--emerald-glow); }
+.status-rechazada { background: rgba(239, 68, 68, 0.2); color: #f87171; }
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(3, 7, 18, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.modal-content {
+  background: var(--bg-card);
+  border: 1px solid var(--emerald-glow);
+  padding: 2rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.modal-close:hover { color: white; }
+
+.modal-content h2 { margin-bottom: 1.5rem; color: var(--emerald-glow); }
+.modal-content p { margin-bottom: 0.8rem; line-height: 1.5; }
+.modal-content strong { color: var(--amber-light); }
+
+/* ========================================= */
+/* V3 ADMIN STYLES & MODALS */
+/* ========================================= */
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  border-bottom: 1px solid #1f2937;
+}
+
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: white;
+}
+
+.tab-btn.active {
+  color: var(--emerald-glow);
+  border-bottom-color: var(--emerald-glow);
+}
+
+.status-pills-container {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.status-pill {
+  flex: 1;
+  min-width: 140px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-radius: 12px;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  text-transform: none;
+}
+
+.status-pill.total { border-bottom: 3px solid #6b7280; }
+.status-pill.total .count { color: white; }
+
+.status-pill.pendientes { border-bottom: 3px solid var(--amber-light); }
+.status-pill.pendientes .count { color: var(--amber-light); }
+
+.status-pill.revision { border-bottom: 3px solid var(--cyan-pulse); }
+.status-pill.revision .count { color: var(--cyan-pulse); }
+
+.status-pill.aprobadas { border-bottom: 3px solid var(--emerald-glow); }
+.status-pill.aprobadas .count { color: var(--emerald-glow); }
+
+.status-pill .count {
+  font-size: 1.8rem;
+  font-weight: 800;
+}
+.status-pill .label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.btn-action {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid transparent;
+  color: var(--text-muted);
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-right: 0.5rem;
+  transition: all 0.2s;
+}
+
+.btn-action.edit:hover { background: rgba(245, 158, 11, 0.15); color: var(--amber-light); border-color: var(--amber-light); }
+.btn-action.delete:hover { background: rgba(239, 68, 68, 0.15); color: #ef4444; border-color: #ef4444; }
+
+.modal-grid-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.info-block {
+  background: rgba(17,24,39,0.5);
+  padding: 1rem;
+  border-radius: 8px;
+  border: 1px solid #1f2937;
+}
+
+.info-block.full-width {
+  grid-column: 1 / -1;
+}
+
+.info-block label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 0.4rem;
+}
+
+.btn-status {
+  flex: 1;
+  padding: 0.8rem;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.2s;
+  background: rgba(255,255,255,0.05);
+  color: white;
+}
+
+.btn-status:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-status.review:not(:disabled):hover { background: rgba(6, 182, 212, 0.2); border-color: var(--cyan-pulse); color: var(--cyan-pulse); }
+.btn-status.approve:not(:disabled):hover { background: rgba(16, 185, 129, 0.2); border-color: var(--emerald-glow); color: var(--emerald-glow); }
+.btn-status.reject:not(:disabled):hover { background: rgba(239, 68, 68, 0.2); border-color: #ef4444; color: #ef4444; }
+
+.modal-confirm {
+  max-width: 400px;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}

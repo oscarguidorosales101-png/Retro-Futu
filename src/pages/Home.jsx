@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { IconClock } from '../components/Icons';
 
 const FALLBACK_MODS = [
-  { id: '1', hardware: 'Game Boy Color', categoria: 'Consola Portátil', tipoMod: 'Carcasa Transparente Amber + Pantalla IPS V3', precioEstimado: 135, tiempoDias: 3 },
-  { id: '2', hardware: 'Control PS5 DualSense', categoria: 'Mandos', tipoMod: 'Back Paddles Programables + Joysticks Hall Effect', precioEstimado: 85, tiempoDias: 2 },
-  { id: '3', hardware: 'Nintendo Switch OLED', categoria: 'Consola Portátil', tipoMod: 'Carcasa Holográfica Emerald + Botones Aluminio', precioEstimado: 160, tiempoDias: 4 },
-  { id: '4', hardware: 'Custom Mechanical Keyboard 75%', categoria: 'Teclados Mecánicos', tipoMod: 'Placa de Latón + Switches Lubricados Lube/Film', precioEstimado: 190, tiempoDias: 5 },
-  { id: '5', hardware: 'Game Boy Advance SP', categoria: 'Consola Portátil', tipoMod: 'Pantalla IPS + USB-C Mod', precioEstimado: 110, tiempoDias: 3 },
-  { id: '6', hardware: 'Control Xbox Elite', categoria: 'Mandos', tipoMod: 'Grips Custom + Pintura Cyberpunk', precioEstimado: 95, tiempoDias: 3 },
+  { id: '1', hardware: 'Game Boy Advance', categoria: 'Consola Portátil', tipoMod: 'Pantalla IPS V2', precioEstimado: 85, tiempoDias: 1 },
+  { id: '2', hardware: 'PlayStation 5 DualSense', categoria: 'Mandos', tipoMod: 'Back Paddles + Hall Effect', precioEstimado: 95, tiempoDias: 2 },
+  { id: '3', hardware: 'Steam Deck', categoria: 'Consola Portátil', tipoMod: 'SSD 2TB + Thermal Mod', precioEstimado: 350, tiempoDias: 6 },
+  { id: '4', hardware: 'Teclado Mecánico 75%', categoria: 'Teclados Mecánicos', tipoMod: 'Placa Latón + Switches Lubed', precioEstimado: 190, tiempoDias: 5 },
+  { id: '5', hardware: 'Game Boy Advance SP', categoria: 'Consola Portátil', tipoMod: 'Pantalla IPS + USB-C', precioEstimado: 110, tiempoDias: 3 },
+  { id: '6', hardware: 'Xbox Series Controller', categoria: 'Mandos', tipoMod: 'Grip Custom + Hair Triggers', precioEstimado: 75, tiempoDias: 2 },
 ];
 
 const Home = () => {
@@ -40,10 +41,10 @@ const Home = () => {
         </div>
       </section>
 
-      {/* Stats rápidas */}
+      {/* Stats rápidas — dinámicas */}
       <div className="stats-row">
         <div className="stat-card">
-          <div className="stat-number">{mods.length}+</div>
+          <div className="stat-number">{mods.length > 0 ? `${mods.length}+` : '—'}</div>
           <div className="stat-label">Mods disponibles</div>
         </div>
         <div className="stat-card">
@@ -89,12 +90,17 @@ const Home = () => {
               <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginBottom: '1.2rem', lineHeight: '1.5' }}>
                 {mod.tipoMod}
               </p>
+              {mod.descripcion && (
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.78rem', marginBottom: '1rem', lineHeight: '1.4' }}>
+                  {mod.descripcion}
+                </p>
+              )}
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'auto' }}>
                 <span style={{ fontSize: '1.3rem', fontWeight: 'bold', color: 'var(--amber-light)' }}>
                   ${mod.precioEstimado} USD
                 </span>
-                <span style={{ fontSize: '0.82rem', color: 'var(--emerald-glow)' }}>
-                  ⏱ {mod.tiempoDias} días
+                <span style={{ fontSize: '0.82rem', color: 'var(--emerald-glow)', display: 'flex', alignItems: 'center', gap: '0.3rem' }}>
+                  <IconClock size={14} color="var(--emerald-glow)" /> {mod.tiempoDias} días
                 </span>
               </div>
             </div>

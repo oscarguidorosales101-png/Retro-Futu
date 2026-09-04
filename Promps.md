@@ -576,6 +576,201 @@ Tu único entregable en esta tarea es:
 
 ### Intervención 1: Análisis y Documentación
 * **Prompt:** "Actúa como analista y documentador de proyectos de desarrollo web con metodología Vibe Coding. Quiero que analices el proyecto actual que tienes abierto en el workspace y prepares una documentación en Markdown llamada: DOCUMENTACION_VIBE_CODING.md..."
+---
+
+# 9. REFLEXIÓN PENDIENTE
+
+Analiza si el proyecto contiene evidencia para responder estas preguntas:
+
+1. ¿Cuánto tiempo habría tomado sin IA y cuánto con IA?
+2. ¿En qué momento la IA se equivocó?
+3. ¿Cómo se detectó el error?
+4. ¿Qué parte fue responsabilidad humana?
+5. ¿Qué parte realizó la IA?
+6. ¿Cómo cambia esto la idea del trabajo de un desarrollador?
+
+Si no existe información suficiente, marca estas respuestas como pendientes.
+
+NO inventes experiencias personales.
+
+---
+
+# 10. PRUEBAS FINALES PENDIENTES
+
+Crea una checklist para comprobar la aplicación.
+
+Por ejemplo:
+
+* [ ] La aplicación inicia correctamente.
+* [ ] La funcionalidad principal funciona.
+* [ ] Los datos aparecen correctamente.
+* [ ] Se pueden eliminar/modificar datos cuando corresponda.
+* [ ] Los formularios validan información.
+* [ ] Se prueban campos vacíos.
+* [ ] Se prueban datos incorrectos.
+* [ ] Se prueban casos repetidos.
+* [ ] La aplicación muestra mensajes claros.
+* [ ] No aparecen errores en consola.
+* [ ] No existen claves o datos sensibles expuestos.
+* [ ] Se cumplen los 3 criterios de éxito del MVP.
+
+Adapta esta lista a las funcionalidades reales del proyecto.
+
+---
+
+# 11. CRITERIOS DE ÉXITO
+
+Determina cuáles deberían ser los 2–3 criterios de éxito del MVP basándote en el negocio actual.
+
+Si no están definidos claramente, crea una propuesta marcada como:
+
+> "Propuesta — pendiente de validación"
+
+No los presentes como requisitos originales si no hay evidencia.
+
+---
+
+# 12. ANÁLISIS DE SEGURIDAD BÁSICA
+
+Revisa únicamente de forma documental:
+
+* claves API
+* contraseñas
+* tokens
+* información bancaria
+* datos personales
+* credenciales
+* información sensible
+* variables expuestas en frontend
+
+Indica si encontraste algo preocupante.
+
+No corrijas nada.
+
+Solo documenta.
+
+---
+
+# 13. ANÁLISIS DE CALIDAD DEL PROYECTO
+
+Sin modificar código, analiza:
+
+* organización
+* reutilización de componentes
+* claridad
+* consistencia visual
+* mantenibilidad
+* posibles errores
+* funcionalidades incompletas
+* archivos innecesarios
+* posibles problemas técnicos
+
+Distingue claramente entre:
+
+**Problemas confirmados**
+
+y
+
+**Posibles mejoras**
+
+No presentes una sospecha como un error confirmado.
+
+---
+
+# 14. PLAN FINAL
+
+Al final crea:
+
+# Plan recomendado antes de entregar
+
+Haz una lista ordenada:
+
+1. Tarea
+2. Motivo
+3. Prioridad
+4. Relación con la práctica
+5. Qué debería comprobarse
+
+IMPORTANTE:
+
+Este plan es solamente una guía.
+
+NO debes ejecutar ninguna de estas tareas.
+
+---
+
+# 15. CONCLUSIÓN
+
+Termina con una conclusión breve explicando:
+
+* Qué tan avanzado está el proyecto.
+* Si ya puede considerarse un MVP.
+* Qué partes cumplen la práctica.
+* Qué partes faltan.
+* Qué debería hacerse antes de la entrega.
+* Cuáles son los puntos más importantes para demostrar el uso correcto de Vibe Coding.
+
+La conclusión debe ser honesta.
+
+No digas que el proyecto está "100% terminado" si existen pendientes.
+
+---
+
+# FORMATO DEL ARCHIVO
+
+El resultado debe ser un Markdown profesional:
+
+`DOCUMENTACION_VIBE_CODING.md`
+
+Debe tener:
+
+* Título
+* Descripción
+* Estado del proyecto
+* Negocio
+* Problema
+* Solución
+* Funcionalidades
+* Análisis del ciclo Vibe Coding
+* Comparación con la práctica
+* Tabla de requisitos
+* Qué falta
+* Rúbrica
+* Bitácora de prompts
+* Pruebas
+* Seguridad
+* Reflexión pendiente
+* Plan de trabajo
+* Conclusión
+
+Usa Markdown limpio, tablas, listas y checkboxes.
+
+## REGLA FINAL
+
+Antes de terminar verifica:
+
+* [ ] Solo creaste/modificaste `DOCUMENTACION_VIBE_CODING.md`
+* [ ] No modificaste código
+* [ ] No eliminaste archivos
+* [ ] No instalaste dependencias
+* [ ] No inventaste información
+* [ ] Diferenciaste hechos confirmados de recomendaciones
+* [ ] Identificaste claramente qué falta para cumplir la práctica
+* [ ] Comparaste el proyecto contra la rúbrica
+* [ ] Documentaste el estado real del MVP
+
+**No programes nada. No arregles nada. No cambies nada del proyecto.**
+
+Tu único entregable en esta tarea es:
+
+`DOCUMENTACION_VIBE_CODING.md`
+
+---
+
+## HISTORIAL DE INTERVENCIONES IA (BITÁCORA VIBE CODING)
+
+### Intervención 1: Análisis y Documentación
+* **Prompt:** "Actúa como analista y documentador de proyectos de desarrollo web con metodología Vibe Coding. Quiero que analices el proyecto actual que tienes abierto en el workspace y prepares una documentación en Markdown llamada: DOCUMENTACION_VIBE_CODING.md..."
 * **Qué generó la IA:** Un análisis completo estático del código. Generó el archivo `DOCUMENTACION_VIBE_CODING.md` detallando el estado actual, las funcionalidades, el nivel de cumplimiento del MVP y listando las tareas pendientes críticas (seguridad, estadísticas estáticas, gestión de cotizaciones).
 * **Qué se revisó:** Se verificó que el análisis reflejara fielmente el código sin inventar funcionalidades y que no modificara archivos.
 * **Qué se modificó:** Ningún archivo de código, únicamente se creó la documentación.
@@ -587,3 +782,29 @@ Tu único entregable en esta tarea es:
 * **Qué se revisó:** Se validó que las nuevas implementaciones no rompieran el diseño Cyberpunk actual ni la funcionalidad base del CRUD y que la UI de gestión de cotizaciones se integrara bien en el panel Admin.
 * **Qué se modificó:** `App.jsx`, `Login.jsx`, `Navbar.jsx`, `Estadisticas.jsx`, `Admin.jsx`, `Cotizador.jsx`, `Footer.jsx`, `DOCUMENTACION_VIBE_CODING.md`, `Promps.md`. Eliminó archivos residuales.
 * **Resultado:** El MVP parcial se transformó en un MVP completo, con ciclo de negocio cerrado y métricas reales.
+
+### Intervención 3: Cotizador Dinámico y Admin V2
+* **Prompt:** "Quiero transformar el Cotizador actual en un cotizador mucho más completo y profesional..."
+* **Qué generó la IA:** Rediseñó completamente `Cotizador.jsx` con opciones dinámicas, checkboxes, resumen y cálculos de precio/tiempo en tiempo real. Modificó `Admin.jsx` para mostrar un Modal con los detalles completos de la cotización, indicadores (Pendiente, En revisión, Aprobada, Rechazada) y filtrado dinámico. Expansión de la base de datos `db.json` con más variedad de inventario.
+* **Qué se revisó:** Que los estilos se integraran correctamente (checkboxes, modal), que el cálculo se realizara apropiadamente y que la experiencia no rompiera el diseño general.
+* **Qué se modificó:** `Cotizador.jsx`, `Admin.jsx`, `Estadisticas.jsx` (tooltip), `db.json`, `index.css`, `DOCUMENTACION_VIBE_CODING.md`, `Promps.md`.
+* **Resultado:** La plataforma ahora cuenta con un flujo de captación de clientes altamente personalizado y un panel administrativo avanzado de gestión de proyectos.
+
+
+---
+### Iteraci�n 5: V3 - MVP Completo, Dual Persistence y Refinamiento Cyberpunk
+**Prompt del Usuario (Resumen):**
+> QUIERO UNA �LTIMA REVISI�N Y CORRECCI�N IMPORTANTE DE VOLTGARAGE.
+> PRIORIDAD ABSOLUTA:
+> 1. Que una cotizaci�n enviada desde 'Cotizador' llegue REALMENTE al Panel Admin.
+> 2. Que el administrador pueda verla, aceptarla, rechazarla o ponerla en revisi�n.
+> 3. Que el sistema funcione aunque json-server no est� disponible (sin mostrar errores t�cnicos).
+> 4. Cero Emojis.
+
+**Acciones de la IA:**
+- Se implement� \Icons.jsx\ para reemplazar todos los emojis con SVG inline heredando color por currentColor.
+- Se refactoriz� \Cotizador.jsx\ y \Admin.jsx\ para guardar y leer simult�neamente de \http://localhost:3001/cotizaciones\ y \localStorage['volt_cotizaciones']\.
+- Se implementaron \ModalConfirmDelete\ y \ModalLogout\ nativos en React con animaciones Cyberpunk (eliminando \window.confirm\).
+- Se redise�� \Estadisticas.jsx\ asegurando que el Tooltip tuviera texto blanco y conect�ndolo a los datos reales de cotizaciones y mods.
+- Se expandi� el cat�logo en \db.json\ a m�s de 25 productos.
+
