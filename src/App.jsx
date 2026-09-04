@@ -8,9 +8,13 @@ import Cotizador from './pages/Cotizador';
 import Estadisticas from './pages/Estadisticas';
 import Admin from './pages/Admin';
 import Login from './pages/Login';
+import Footer from './components/Footer';
 
 function App() {
-  const [authUser, setAuthUser] = useState(null);
+  const [authUser, setAuthUser] = useState(() => {
+    const saved = localStorage.getItem('volt_session');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [bgPaused, setBgPaused] = useState(false);
 
   return (
@@ -25,8 +29,8 @@ function App() {
           title={bgPaused ? 'Reanudar animación' : 'Pausar animación (recomendado para fotosensibles)'}
           style={{
             position: 'fixed',
-            bottom: '95px',
-            right: '25px',
+            bottom: '25px',
+            left: '25px',
             zIndex: 1002,
             background: bgPaused ? 'linear-gradient(135deg, #059669, #047857)' : 'rgba(17, 24, 39, 0.9)',
             border: bgPaused ? '2px solid #10b981' : '2px solid rgba(245, 158, 11, 0.6)',
@@ -64,6 +68,7 @@ function App() {
         </main>
 
         <Chatbot />
+        <Footer />
       </div>
     </Router>
   );

@@ -19,6 +19,7 @@ const Login = ({ setAuthUser }) => {
       const usuarios = await res.json();
       const found = usuarios.find((u) => u.usuario === user && u.contrasena === pass);
       if (found) {
+        localStorage.setItem('volt_session', JSON.stringify(found));
         setAuthUser(found);
         navigate('/admin');
         return;
@@ -26,13 +27,15 @@ const Login = ({ setAuthUser }) => {
     } catch {
       // Fallback: validar localmente si el server no está corriendo
       if (user === 'admin' && pass === 'retro123') {
-        setAuthUser({ usuario: 'admin', rol: 'tecnico_master' });
+        const demoUser = { usuario: 'admin', rol: 'tecnico_master' };
+        localStorage.setItem('volt_session', JSON.stringify(demoUser));
+        setAuthUser(demoUser);
         navigate('/admin');
         return;
       }
     }
 
-    setError('❌ Credenciales incorrectas. Usa: admin / retro123');
+    setError('❌ Usuario o contraseña incorrectos.');
     setLoading(false);
   };
 

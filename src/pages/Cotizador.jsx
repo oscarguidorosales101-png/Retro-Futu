@@ -20,7 +20,7 @@ const Cotizador = () => {
       tipoMod,
       presupuesto: presupuesto ? parseFloat(presupuesto) : null,
       email,
-      fecha: new Date().toLocaleDateString('es-MX'),
+      fecha: new Date().toISOString(),
       estado: 'Pendiente',
     };
 
@@ -32,7 +32,7 @@ const Cotizador = () => {
       });
       setMensaje('¡Cotización enviada con éxito! Un técnico te contactará en menos de 24 horas.');
     } catch {
-      setMensaje('✅ Solicitud registrada en modo local. ¡Pronto nos pondremos en contacto!');
+      setMensaje('✅ Solicitud registrada en MODO LOCAL (Los datos podrían perderse al recargar).');
     } finally {
       setLoading(false);
       setHardware('');
@@ -93,13 +93,14 @@ const Cotizador = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="email">Email de contacto</label>
+            <label htmlFor="email">Email de contacto *</label>
             <input
               id="email"
               type="email"
               placeholder="tu@correo.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              required
             />
           </div>
 

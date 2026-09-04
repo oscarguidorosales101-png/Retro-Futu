@@ -5,6 +5,7 @@ const Navbar = ({ authUser, setAuthUser }) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
+    localStorage.removeItem('volt_session');
     setAuthUser(null);
     navigate('/');
   };
